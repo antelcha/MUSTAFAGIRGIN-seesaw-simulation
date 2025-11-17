@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.pointerEvents = 'none';
         circle.style.zIndex = '3';
         
-        return { element: circle, x: x - radius, y: y - radius, mass: mass };
+        return { element: circle, x: x - radius, y: y - radius, mass: mass, isFalling: true };
     }
 
     function isPointOnBar(x, y) {
@@ -82,7 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function fall() {
         if (circleData.length > 0) {
             for (const circle of circleData) {
-
+                if (!circle.isFalling) {
+                    continue;
+                }
                 const horizontalDistFromPivot = (circle.x + circleRadius) - seesawCenterX;
 
                 const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromPivot, barHeight);
@@ -90,19 +92,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetY = container.clientHeight - baseHeight - barSurfaceY - circleRadius;
 
                 if (circle.y < targetY) {
-                    circle.y = Math.min(circle.y + 300, targetY);
+                    circle.y = Math.min(circle.y + 100, targetY);
                     circle.element.style.top = `${circle.y}px`;
-                }
-                
 
+                    if (circle.y >= targetY) {
+                        circle.isFalling = false;
+                    }
+                }
             }
            
         }
 
+
+        
         requestAnimationFrame(fall);
+    }
+
+    function updateCirclesIfNeeded() {
         const angle = Math.max(-30, Math.min(30, (calculateTorque() / 10)));
         console.log(calculateTorque());
+        setAngle(angle);
 
+        
     }
 
     function calculateTorque() {
@@ -119,6 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
         barAngle = angle;
         bar.style.transform = `rotate(${barAngle}deg)`;
     }
+
+    function rotatePoint(x, y, cx, cy, angle) {
+        const rad = angle * Math.PI / 180;
+    
+        const dx = x - cx;
+        const dy = y - cy;
+    
+        const newX = dx * Math.cos(rad) - dy * Math.sin(rad);
+        const newY = dx * Math.sin(rad) + dy * Math.cos(rad);
+    
+        return {
+            x: newX + cx,
+            y: newY + cy
+        };
+    }
+    
 
 
     fall();
