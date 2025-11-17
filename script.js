@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const barWidth = bar ? bar.offsetWidth : 0;
     const baseHeight = groundHeight + supportHeight + barHeight;
 
-    const circleRadius = 30;
+    const circleRadius = 5;
 
     const barRect = bar.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.borderRadius = '50%';
         circle.style.background = 'red';
         circle.style.pointerEvents = 'none';
+        circle.style.zIndex = '3';
         
         return { element: circle, x: x - radius, y: y - radius, mass: mass };
     }
