@@ -32,6 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
 
     bar.style.transform = `rotate(${barAngle}deg)`;
+        
+    const possibleCircles = [
+        { color: '#FF0000', mass: 1, radius: 8 },    // parlak kırmızı
+        { color: '#00FFD0', mass: 2, radius: 10 },   // canlı turkuaz
+        { color: '#0099FF', mass: 3, radius: 12 },   // canlı mavi
+        { color: '#FF9100', mass: 4, radius: 14 },   // parlak turuncu
+        { color: '#00FF38', mass: 5, radius: 16 },   // canlı yeşil
+        { color: '#FFFF00', mass: 6, radius: 18 },   // parlak sarı
+        { color: '#B900FF', mass: 7, radius: 20 },   // parlak mor
+        { color: '#FF42A1', mass: 8, radius: 22 },   // canlı pembe
+        { color: '#00CFFF', mass: 9, radius: 24 },   // parlak açık mavi
+        { color: '#13FF00', mass: 10, radius: 26 },  // parlak koyu yeşil
+    ];
 
 
     let previewCircle = createCircle(0, 0, 1, circleRadius, 'red');
@@ -102,9 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function nextCircle() {
-        const randomColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-        const randomMass = Math.floor(Math.random() * 5) + 1;
-        const randomRadius = Math.floor(Math.random() * 20) + 10;
+        const randomCircle = possibleCircles[Math.floor(Math.random() * possibleCircles.length)];
+        const randomColor = randomCircle.color;
+        const randomMass = randomCircle.mass;
+        const randomRadius = randomCircle.radius;
         
         previewCircle.mass = randomMass;
         previewCircle.radius = randomRadius;
@@ -112,9 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
         previewCircle.element.style.background = randomColor;
         previewCircle.element.style.width = `${randomRadius * 2}px`;
         previewCircle.element.style.height = `${randomRadius * 2}px`;
-
         previewCircle.element.style.left = `${previewCircle.x}px`;
         previewCircle.element.style.top = `${previewCircle.y}px`;
+        
+
     }
 
 
