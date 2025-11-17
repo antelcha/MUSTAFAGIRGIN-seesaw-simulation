@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             for (const circle of circleData) {
                 if (circle.y < container.clientHeight - 50) {
-                    circle.y = Math.min(circle.y + 10, container.clientHeight);
+                    circle.y = Math.min(circle.y + 10, container.clientHeight - 50);
                     circle.element.style.top = `${circle.y}px`;
                     console.log(circle.y);
                 }
