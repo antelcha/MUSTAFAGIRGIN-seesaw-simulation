@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.simulation-container');
+    const bar = document.querySelector('.bar');
     const circleData = [];
 
 
@@ -28,16 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = container.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
-
-        const bar = container.querySelector('.bar');
+        if (!bar) return;
         let barLeft = null;
         let barRight = null;
-        if (bar) {
-            const barRect = bar.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            barLeft = barRect.left - containerRect.left;
-            barRight = barRect.right - containerRect.left;
-        }
+        const barRect = bar.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        barLeft = barRect.left - containerRect.left;
+        barRight = barRect.right - containerRect.left;
+
         if (mouseX < barLeft || mouseX > barRight) {
             return;
         }
@@ -50,9 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fall() {
         if (circleData.length > 0) {
+            
             for (const circle of circleData) {
-                if (circle.y < container.clientHeight - 0) {
-                    circle.y = Math.min(circle.y + 10, container.clientHeight - 50);
+                if (circle.y < container.clientHeight - 50) {
+                    circle.y = Math.min(circle.y + 10, container.clientHeight);
                     circle.element.style.top = `${circle.y}px`;
                     console.log(circle.y);
                 }
