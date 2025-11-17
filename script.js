@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.pointerEvents = 'none';
         circle.style.zIndex = '3';
         
-        return { element: circle, x: x - radius, y: y - radius, mass: mass, isFalling: true };
+        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false };
     }
 
     function isPointOnBar(x, y) {
@@ -82,7 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function fall() {
         if (circleData.length > 0) {
             for (const circle of circleData) {
-                if (!circle.isFalling) {
+                if (circle.isOnBar) {
+                    
                     continue;
                 }
                 const horizontalDistFromPivot = (circle.x + circleRadius) - seesawCenterX;
@@ -92,14 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetY = container.clientHeight - baseHeight - barSurfaceY - circleRadius;
 
                 if (circle.y < targetY) {
-                    circle.y = Math.min(circle.y + 100, targetY);
+                    circle.y = Math.min(circle.y + 10, targetY);
                     circle.element.style.top = `${circle.y}px`;
 
                     if (circle.y >= targetY) {
-                        circle.isFalling = false;
+                        circle.isOnBar = true;
                     }
                 }
+
             }
+
            
         }
 
@@ -108,12 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(fall);
     }
 
-    function updateCirclesIfNeeded() {
+
+
+    function updateCirclesIfNeeded(circle) {
         const angle = Math.max(-30, Math.min(30, (calculateTorque() / 10)));
         console.log(calculateTorque());
+
         setAngle(angle);
 
-        
+
     }
 
     function calculateTorque() {
