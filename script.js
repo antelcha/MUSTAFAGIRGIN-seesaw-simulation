@@ -116,20 +116,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function nextCircle() {
         const randomCircle = possibleCircles[Math.floor(Math.random() * possibleCircles.length)];
-        const randomColor = randomCircle.color;
-        const randomMass = randomCircle.mass;
-        const randomRadius = randomCircle.radius;
         
-        previewCircle.mass = randomMass;
-        previewCircle.radius = randomRadius;
-        previewCircle.color = randomColor;
-        previewCircle.element.style.background = randomColor;
-        previewCircle.element.style.width = `${randomRadius * 2}px`;
-        previewCircle.element.style.height = `${randomRadius * 2}px`;
+        const oldCenterX = previewCircle.x + previewCircle.radius;
+        const oldCenterY = previewCircle.y + previewCircle.radius;
+        
+        previewCircle.mass = randomCircle.mass;
+        previewCircle.radius = randomCircle.radius;
+        previewCircle.color = randomCircle.color;
+        
+        previewCircle.x = oldCenterX - randomCircle.radius;
+        previewCircle.y = oldCenterY - randomCircle.radius;
+        
+        previewCircle.element.style.background = randomCircle.color;
+        previewCircle.element.style.width = `${randomCircle.radius * 2}px`;
+        previewCircle.element.style.height = `${randomCircle.radius * 2}px`;
         previewCircle.element.style.left = `${previewCircle.x}px`;
         previewCircle.element.style.top = `${previewCircle.y}px`;
-        
-
     }
 
 
@@ -170,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 requestAnimationFrame(fall);
             } else {
                 animationRunning = false;
-            }
+            } 
         }
 
     }
