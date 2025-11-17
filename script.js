@@ -179,6 +179,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
 
-
-    fall();
 });
