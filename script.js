@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bar = document.querySelector('.bar');
 
     const circleData = [];
-    let barAngle = -30;
+    let barAngle = 30;
 
     const ground = document.querySelector('.ground');
     const support = document.querySelector('.support');
@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const groundHeight = ground ? ground.offsetHeight : 0;
     const supportHeight = support ? support.offsetHeight : 0;
     const barHeight = bar ? bar.offsetHeight : 0;
-
+    const barWidth = bar ? bar.offsetWidth : 0;
     const baseHeight = groundHeight + supportHeight + barHeight;
 
-    const circleRadius = 10;
+    const circleRadius = 30;
 
     const barRect = bar.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
@@ -29,19 +29,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bar.style.transform = `rotate(${barAngle}deg)`;
 
-    function createCircle(x, y) {
+    function createCircle(x, y, mass, radius) {
         const circle = document.createElement('div');
-        
         circle.style.position = 'absolute';
-        circle.style.left = `${x - circleRadius}px`;     
-        circle.style.top = `${y - circleRadius}px`;
-        circle.style.width = '20px';
-        circle.style.height = '20px';
+        circle.style.left = `${x - radius}px`;     
+        circle.style.top = `${y - radius}px`;
+        circle.style.width = `${radius * 2}px`;
+        circle.style.height = `${radius * 2}px`;
         circle.style.borderRadius = '50%';
         circle.style.background = 'red';
         circle.style.pointerEvents = 'none';
         
-        return { element: circle, x: x - circleRadius, y: y - circleRadius, mass: 1 };
+        return { element: circle, x: x - radius, y: y - radius, mass: mass };
+    }
+
+    function isPointOnBar(x, y) {
+        const angleRad = barAngle * Math.PI / 180;
+        const horizontalProjection = (barWidth / 2) * Math.cos(angleRad);
+        const barLeftX = seesawCenterX - horizontalProjection;
+        const barRightX = seesawCenterX + horizontalProjection;
+        const withinX = x >= barLeftX && x <= barRightX;        
+        return withinX;
     }
 
     container.addEventListener('click', (event) => {
@@ -49,9 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
-        if (mouseX < barLeft || mouseX > barRight) return;
+        if (!isPointOnBar(mouseX, mouseY)) return;
 
-        const circleObj = createCircle(mouseX, mouseY);
+        const circleObj = createCircle(mouseX, mouseY, 1, circleRadius);
         circleData.push(circleObj);
         container.appendChild(circleObj.element);
 
