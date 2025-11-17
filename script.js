@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const circleData = [];
     let barAngle = 0;
+    let animationRunning = false;
+
 
     const ground = document.querySelector('.ground');
     const support = document.querySelector('.support');
@@ -66,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
         circleData.push(circleObj);
         container.appendChild(circleObj.element);
 
+        if (!animationRunning) {
+            animationRunning = true;
+            fall();
+        }
         console.log(circleData);
     });
 
@@ -100,14 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         circle.isOnBar = true;
                     }
                 }
-
             }
-
-           
         }
-
-
-        
         requestAnimationFrame(fall);
     }
 
@@ -125,9 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateTorque() {
         totalTorque = 0;
         for (const circle of circleData) {
-            const distance = circle.x - seesawCenterX;
-            const force = circle.mass;
-            totalTorque += distance * force;
+            if (circle.isOnBar) {
+                const distance = circle.x - seesawCenterX;
+                const force = circle.mass;
+                totalTorque += distance * force;
+            }
         }
         return totalTorque;
     }
