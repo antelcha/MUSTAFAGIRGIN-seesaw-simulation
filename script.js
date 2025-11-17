@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalTorque = 0;
         for (const circle of circleData) {
             if (circle.isOnBar) {
-                const distance = circle.x - seesawCenterX;
+                const distance = circle.x + circleRadius - seesawCenterX;
                 const force = circle.mass;
                 totalTorque += distance * force;
             }
