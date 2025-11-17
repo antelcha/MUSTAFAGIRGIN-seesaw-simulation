@@ -34,12 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bar.style.transform = `rotate(${barAngle}deg)`;
 
 
-    let previewCircle = createCircle(0, 0, 1, circleRadius);
+    let previewCircle = createCircle(0, 0, 1, circleRadius, 'red');
     container.appendChild(previewCircle.element);
+    nextCircle();
     
     
 
-    function createCircle(x, y, mass, radius) {
+    function createCircle(x, y, mass, radius, color) {
         const circle = document.createElement('div');
         circle.style.position = 'absolute';
         circle.style.left = `${x - radius}px`;     
@@ -47,12 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.width = `${radius * 2}px`;
         circle.style.height = `${radius * 2}px`;
         circle.style.borderRadius = '50%';
-        circle.style.background = 'red';
+        circle.style.background = color;
         circle.style.pointerEvents = 'none';
         circle.style.zIndex = '3';
         
         
-        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius };
+        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius, color: color };
     }
 
     function isPointOnBar(x, y) {
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isPointOnBar(mouseX, mouseY)) return;
 
-        const newCircle = createCircle(previewCircle.x + previewCircle.radius, previewCircle.y + previewCircle.radius, previewCircle.mass, previewCircle.radius);
+        const newCircle = createCircle(previewCircle.x + previewCircle.radius, previewCircle.y + previewCircle.radius, previewCircle.mass, previewCircle.radius, previewCircle.color);
         circleData.push(newCircle);
         container.appendChild(newCircle.element);
 
@@ -103,10 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function nextCircle() {
         const randomColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
         const randomMass = Math.floor(Math.random() * 5) + 1;
-        const randomRadius = Math.floor(Math.random() * 41) + 20;
+        const randomRadius = Math.floor(Math.random() * 20) + 10;
         
         previewCircle.mass = randomMass;
         previewCircle.radius = randomRadius;
+        previewCircle.color = randomColor;
         previewCircle.element.style.background = randomColor;
         previewCircle.element.style.width = `${randomRadius * 2}px`;
         previewCircle.element.style.height = `${randomRadius * 2}px`;
@@ -130,11 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (circleData.length > 0) {
             for (const circle of circleData) {
 
-                const horizontalDistFromPivot = (circle.x + circleRadius) - seesawCenterX;
+                const horizontalDistFromPivot = (circle.x + circle.radius) - seesawCenterX;
 
                 const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromPivot, barHeight);
 
-                const targetY = container.clientHeight - baseHeight - barSurfaceY - circleRadius;
+                const targetY = container.clientHeight - baseHeight - barSurfaceY - circle.radius;
 
                 if (circle.y < targetY) {
                     falling = true;
@@ -165,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         for (const circle of circleData) {
             if (circle.isOnBar) {
-                const circleCenterX = circle.x + circleRadius;
-                const circleCenterY = circle.y + circleRadius;
+                const circleCenterX = circle.x + circle.radius;
+                const circleCenterY = circle.y + circle.radius;
                 
                 const rotated = rotatePoint(
                     circleCenterX, 
@@ -176,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     angleDifference
                 );
                 
-                circle.x = rotated.x - circleRadius;
-                circle.y = rotated.y - circleRadius;
+                circle.x = rotated.x - circle.radius;
+                circle.y = rotated.y - circle.radius;
                 circle.element.style.left = `${circle.x}px`;
                 circle.element.style.top = `${circle.y}px`;
             }
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalTorque = 0;
         for (const circle of circleData) {
             if (circle.isOnBar) {
-                const distance = circle.x + circleRadius - seesawCenterX;
+                const distance = circle.x + circle.radius - seesawCenterX;
                 const force = circle.mass;
                 totalTorque += distance * force;
             }
