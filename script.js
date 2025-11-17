@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.simulation-container');
+    const circleData = [];
     container.addEventListener('click', (event) => {
         const rect = container.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -12,8 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.height = '20px';
         circle.style.borderRadius = '50%';
         circle.style.backgroundColor = 'red';     
-        circle.style.pointerEvents = 'none';     
-        
+        circle.style.pointerEvents = 'none';
+        circleData.push({
+            element: circle,
+            x: mouseX - 10,
+            y: mouseY - 10,
+            mass: 1
+        });
         container.appendChild(circle);
+        console.log(circleData);
+
     });
  });
