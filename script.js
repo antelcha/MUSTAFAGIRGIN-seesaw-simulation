@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bar = document.querySelector('.bar');
 
     const circleData = [];
-    let barAngle = 30;
+    let barAngle = 0;
 
     const ground = document.querySelector('.ground');
     const support = document.querySelector('.support');
@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const barLeft = barRect.left - containerRect.left;
     const barRight = barRect.right - containerRect.left;
+
+    let totalTorque = 0;
 
     console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
 
@@ -88,14 +90,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetY = container.clientHeight - baseHeight - barSurfaceY - circleRadius;
 
                 if (circle.y < targetY) {
-                    circle.y = Math.min(circle.y + 10, targetY);
+                    circle.y = Math.min(circle.y + 300, targetY);
                     circle.element.style.top = `${circle.y}px`;
                 }
+                
+
             }
+           
         }
 
         requestAnimationFrame(fall);
+        const angle = Math.max(-30, Math.min(30, (calculateTorque() / 10)));
+        console.log(calculateTorque());
+
     }
+
+    function calculateTorque() {
+        totalTorque = 0;
+        for (const circle of circleData) {
+            const distance = circle.x - seesawCenterX;
+            const force = circle.mass;
+            totalTorque += distance * force;
+        }
+        return totalTorque;
+    }
+
+    function setAngle(angle) {
+        barAngle = angle;
+        bar.style.transform = `rotate(${barAngle}deg)`;
+    }
+
 
     fall();
 });
