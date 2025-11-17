@@ -47,8 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
 
-    let previewCircle = createCircle(0, 0, 1, circleRadius, 'red');
+    let previewCircle = createCircle(0, 0, 2, circleRadius, 'red');
+    previewCircle.y = 50;
+    previewCircle.element.style.top = '50px';
     container.appendChild(previewCircle.element);
+    previewCircle.element.style.display = 'none';
     nextCircle();
     
     
@@ -64,7 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.background = color;
         circle.style.pointerEvents = 'none';
         circle.style.zIndex = '3';
-        
+
+
+
+        const massText = document.createElement('span');
+        massText.innerText = mass;
+        massText.style.position = 'absolute';
+        massText.style.left = '50%';
+        massText.style.top = '50%';
+        massText.style.transform = 'translate(-50%, -50%)';
+        massText.style.color = '#222';
+        massText.style.fontWeight = 'bold';
+        massText.style.fontSize = '12px';
+        massText.style.userSelect = 'none';
+        massText.style.pointerEvents = 'none';
+        circle.appendChild(massText);
         
         return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius, color: color };
     }
@@ -82,12 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = container.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
-        if (!isPointOnBar(mouseX, mouseY)) return;
+        if (!isPointOnBar(mouseX, mouseY)) {
+            previewCircle.element.style.display = 'none';
+            return;
+        }
+        previewCircle.element.style.display = 'block';
 
         previewCircle.x = mouseX - previewCircle.radius;
-        previewCircle.y = mouseY - previewCircle.radius;
+
         previewCircle.element.style.left = `${previewCircle.x}px`;
-        previewCircle.element.style.top = `${previewCircle.y}px`;
+
         
         console.log(mouseX, mouseY);
     });
@@ -128,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewCircle.y = oldCenterY - randomCircle.radius;
         
         previewCircle.element.style.background = randomCircle.color;
+        previewCircle.element.querySelector('span').innerText = randomCircle.mass;
         previewCircle.element.style.width = `${randomCircle.radius * 2}px`;
         previewCircle.element.style.height = `${randomCircle.radius * 2}px`;
         previewCircle.element.style.left = `${previewCircle.x}px`;
