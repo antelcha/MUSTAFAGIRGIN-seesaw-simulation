@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const barWidth = bar ? bar.offsetWidth : 0;
     const baseHeight = groundHeight + supportHeight + barHeight;
 
-    const circleRadius = 5;
+    const circleRadius = 50;
 
     const barRect = bar.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let previewCircle = createCircle(0, 0, 1, circleRadius);
     container.appendChild(previewCircle.element);
-
+    
     
 
     function createCircle(x, y, mass, radius) {
@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         circle.style.pointerEvents = 'none';
         circle.style.zIndex = '3';
         
-        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false };
+        
+        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius };
     }
 
     function isPointOnBar(x, y) {
@@ -69,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const mouseY = event.clientY - rect.top;
         if (!isPointOnBar(mouseX, mouseY)) return;
 
-        previewCircle.x = mouseX - circleRadius;
-        previewCircle.y = mouseY - circleRadius;
+        previewCircle.x = mouseX - previewCircle.radius;
+        previewCircle.y = mouseY - previewCircle.radius;
         previewCircle.element.style.left = `${previewCircle.x}px`;
         previewCircle.element.style.top = `${previewCircle.y}px`;
         
@@ -84,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isPointOnBar(mouseX, mouseY)) return;
 
-        newCircle = createCircle(mouseX, mouseY, 1, circleRadius);
+        const newCircle = createCircle(previewCircle.x + previewCircle.radius, previewCircle.y + previewCircle.radius, previewCircle.mass, previewCircle.radius);
         circleData.push(newCircle);
         container.appendChild(newCircle.element);
 
@@ -95,7 +96,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log(previewCircle);
+        nextCircle()
+
     });
+
+    function nextCircle() {
+        const randomColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+        const randomMass = Math.floor(Math.random() * 5) + 1;
+        const randomRadius = Math.floor(Math.random() * 41) + 20;
+        
+        previewCircle.mass = randomMass;
+        previewCircle.radius = randomRadius;
+        previewCircle.element.style.background = randomColor;
+        previewCircle.element.style.width = `${randomRadius * 2}px`;
+        previewCircle.element.style.height = `${randomRadius * 2}px`;
+
+        previewCircle.element.style.left = `${previewCircle.x}px`;
+        previewCircle.element.style.top = `${previewCircle.y}px`;
+    }
 
 
     // this is for calculating the corresponding vertical 
