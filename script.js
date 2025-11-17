@@ -120,13 +120,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function updateCirclesIfNeeded(circle) {
-        const angle = Math.max(-30, Math.min(30, (calculateTorque() / 10)));
-        console.log(calculateTorque());
-
-        setAngle(angle);
-
-
+    function updateCirclesIfNeeded(newAngle) {
+        const angleDifference = newAngle - barAngle;    
+        
+        for (const circle of circleData) {
+            if (circle.isOnBar) {
+                const circleCenterX = circle.x + circleRadius;
+                const circleCenterY = circle.y + circleRadius;
+                
+                const rotated = rotatePoint(
+                    circleCenterX, 
+                    circleCenterY, 
+                    seesawCenterX, 
+                    seesawCenterY, 
+                    angleDifference
+                );
+                
+                circle.x = rotated.x - circleRadius;
+                circle.y = rotated.y - circleRadius;
+                circle.element.style.left = `${circle.x}px`;
+                circle.element.style.top = `${circle.y}px`;
+            }
+        }
+        
+        setAngle(newAngle);
     }
 
     function calculateTorque() {
