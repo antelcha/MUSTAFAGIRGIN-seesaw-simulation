@@ -33,6 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bar.style.transform = `rotate(${barAngle}deg)`;
 
+
+    let previewCircle = createCircle(0, 0, 1, circleRadius);
+    container.appendChild(previewCircle.element);
+
+    
+
     function createCircle(x, y, mass, radius) {
         const circle = document.createElement('div');
         circle.style.position = 'absolute';
@@ -57,6 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return withinX;
     }
 
+    container.addEventListener('mousemove', (event) => {
+        const rect = container.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        if (!isPointOnBar(mouseX, mouseY)) return;
+
+        previewCircle.x = mouseX - circleRadius;
+        previewCircle.y = mouseY - circleRadius;
+        previewCircle.element.style.left = `${previewCircle.x}px`;
+        previewCircle.element.style.top = `${previewCircle.y}px`;
+        
+        console.log(mouseX, mouseY);
+    });
+
     container.addEventListener('click', (event) => {
         const rect = container.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -64,15 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isPointOnBar(mouseX, mouseY)) return;
 
-        const circleObj = createCircle(mouseX, mouseY, 1, circleRadius);
-        circleData.push(circleObj);
-        container.appendChild(circleObj.element);
+        newCircle = createCircle(mouseX, mouseY, 1, circleRadius);
+        circleData.push(newCircle);
+        container.appendChild(newCircle.element);
+
 
         if (!animationRunning) {
             animationRunning = true;
             fall();
         }
-        console.log(circleData);
+
+        console.log(previewCircle);
     });
 
 
