@@ -138,4 +138,5 @@ min-height: 100vh;
     height: 200px;
     background-color: #fafafa;
     border: 1px solid #000;
+    overflow-y: auto;
 }

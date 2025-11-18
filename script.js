@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
     previewLine.style.zIndex = '2';
     previewLine.style.display = 'none';
     container.appendChild(previewLine);
+
+
+    const logContainer = document.querySelector('.log-container');
+    let dropCount = 0;
      
 
     function createCircle(x, y, mass, radius, color) {
@@ -225,8 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     circle.y = Math.min(circle.y + 10, targetY);
                     circle.element.style.top = `${circle.y}px`;
 
-                    if (circle.y >= targetY) {
+                    if (circle.y >= targetY && !circle.isOnBar) {
                         circle.isOnBar = true;
+                        logDrop(circle)
                     }
                 }
             }
@@ -263,6 +268,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nextWeightBox) {
             nextWeightBox.querySelector('.value').textContent = nextWeight + ' kg';
         }
+    }
+
+    function logDrop(circle) {
+        dropCount++;
+        
+        const logEntry = document.createElement('div');
+        logEntry.style.margin = '5px';
+        logEntry.style.padding = '5px 10px';
+        logEntry.style.borderRadius = '5px';
+        logEntry.style.fontSize = '12px';
+        logEntry.style.fontFamily = 'monospace';
+        logEntry.style.backgroundColor = circle.color;
+
+        
+        const position = Math.round(circle.x + circle.radius - seesawCenterX);
+        const side = position < 0 ? 'LEFT' : 'RIGHT';
+        
+        logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position)}px ${side}`;
+            
+        logContainer.insertBefore(logEntry, logContainer.firstChild);
     }
 
 
