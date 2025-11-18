@@ -47,9 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
 
-    let previewCircle = createCircle(0, 0, 2, circleRadius, 'red');
-    previewCircle.y = 50;
-    previewCircle.element.style.top = '50px';
+    let previewCircle = createCircle(0, 30, 2, circleRadius, 'red');
     container.appendChild(previewCircle.element);
     previewCircle.element.style.display = 'none';
     nextCircle();
