@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let previewLine = document.createElement('div');
     previewLine.style.position = 'absolute';
     previewLine.style.width = '2px';
-    previewLine.style.background = 'repeating-linear-gradient(to bottom, #999 0px, #999 5px, transparent 5px, transparent 10px)';
+    previewLine.style.background = 'repeating-linear-gradient(to bottom, #bbb  0px, #bbb 5px, transparent 5px, transparent 10px)';
     previewLine.style.pointerEvents = 'none';
     previewLine.style.zIndex = '2';
     previewLine.style.display = 'none';
@@ -233,7 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const newAngle = Math.max(-30, Math.min(30, (calculateTorqueAndWeights() / 10)));
             updateCirclesIfNeeded(newAngle);
 
-            if (falling) {
+            const angleNeedsUpdate = Math.abs(newAngle - barAngle) > 0.01;
+
+            if (falling || angleNeedsUpdate) {
                 requestAnimationFrame(fall);
             } else {
                 animationRunning = false;
@@ -265,7 +267,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function updateCirclesIfNeeded(newAngle) {
-        const angleDifference = newAngle - barAngle;    
+        const angleDifference = newAngle - barAngle;
+        
+        if (Math.abs(angleDifference) < 0.01) {
+            return;
+        }
+        
+        const step = angleDifference * 0.2; 
         
         for (const circle of circleData) {
             if (circle.isOnBar) {
@@ -277,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     circleCenterY, 
                     seesawCenterX, 
                     seesawCenterY, 
-                    angleDifference
+                    step  
                 );
                 
                 circle.x = rotated.x - circle.radius;
@@ -287,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        setAngle(newAngle);
+        setAngle(barAngle + step);  
     }
 
     function calculateTorqueAndWeights() {
