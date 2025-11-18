@@ -150,5 +150,15 @@ min-height: 100vh;
     border-radius: 5px;
     cursor: pointer;
     width: 30%;
+
+    &:hover {
+        background-color: #059669;
+    }
+
+    &:active {
+        background-color: #047857;
+
+    }
     
+
 }
