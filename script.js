@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let nextWeight = 0;
     console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
 
+    
+
+    
     bar.style.transform = `rotate(${barAngle}deg)`;
         
     const possibleCircles = [
@@ -55,6 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
     nextCircle();
     
     
+    let previewLine = document.createElement('div');
+    previewLine.style.position = 'absolute';
+    previewLine.style.width = '2px';
+    previewLine.style.background = 'rgba(255, 0, 0, 0.5)'; 
+    previewLine.style.pointerEvents = 'none';
+    previewLine.style.zIndex = '2';
+    previewLine.style.display = 'none';
+    container.appendChild(previewLine);
+     
 
     function createCircle(x, y, mass, radius, color) {
         const circle = document.createElement('div');
@@ -101,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mouseY = event.clientY - rect.top;
         if (!isPointOnBar(mouseX, mouseY)) {
             previewCircle.element.style.display = 'none';
+            previewLine.style.display = 'none';
             return;
         }
         previewCircle.element.style.display = 'block';
@@ -109,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         previewCircle.element.style.left = `${previewCircle.x}px`;
 
-        
+        updatePreviewLine();
         console.log(mouseX, mouseY);
     });
 
@@ -154,6 +167,31 @@ document.addEventListener('DOMContentLoaded', () => {
         previewCircle.element.style.height = `${randomCircle.radius * 2}px`;
         previewCircle.element.style.left = `${previewCircle.x}px`;
         previewCircle.element.style.top = `${previewCircle.y}px`;
+
+
+    }
+
+    function updatePreviewLine() {
+        if (previewCircle.element.style.display === 'none') {
+            previewLine.style.display = 'none';
+            return;
+        }
+        
+        const circleBottomY = previewCircle.y + previewCircle.radius * 2;
+        
+        const circleCenterX = previewCircle.x + previewCircle.radius;
+        
+        const horizontalDistFromSupport = circleCenterX - seesawCenterX;
+        const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromSupport, barHeight);
+        
+        const barTopY = container.clientHeight - baseHeight - barSurfaceY;
+        
+        const lineHeight = Math.max(0, barTopY - circleBottomY);
+        
+        previewLine.style.left = `${circleCenterX - 1}px`; 
+        previewLine.style.top = `${circleBottomY}px`;
+        previewLine.style.height = `${lineHeight}px`;
+        previewLine.style.display = 'block';
     }
 
 
@@ -198,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         updateInformationBoxes();
+        updatePreviewLine();
     }
 
     function updateInformationBoxes() {
