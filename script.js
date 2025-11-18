@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let barLeft = barRect.left - containerRect.left;
     let barRight = barRect.right - containerRect.left;
 
+    let oldSeesawCenterX = seesawCenterX;
+    let oldSeesawCenterY = seesawCenterY;
+    let oldBarWidth = barWidth;
+
     let totalTorque = 0;
     let leftWeight = 0;
     let rightWeight = 0;
@@ -169,9 +173,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+
     window.addEventListener('resize', () => {
         console.log('resize');
+        const prevSeesawCenterX = oldSeesawCenterX;
+        const prevSeesawCenterY = oldSeesawCenterY;
+        const prevBarWidth = oldBarWidth;
+
         recalculateDimensions();
+        moveCirclesToNewPosition(prevSeesawCenterX, prevSeesawCenterY, prevBarWidth);
+
+        oldSeesawCenterX = seesawCenterX;
+        oldSeesawCenterY = seesawCenterY;
+        oldBarWidth = barWidth;
     });
 
 
@@ -185,6 +199,40 @@ document.addEventListener('DOMContentLoaded', () => {
         
         console.log('Dimensions recalculated');
 
+    }
+
+    function moveCirclesToNewPosition(prevSeesawCenterX, prevSeesawCenterY, prevBarWidth) {
+        const centerXDiff = seesawCenterX - prevSeesawCenterX;
+        const centerYDiff = seesawCenterY - prevSeesawCenterY;
+
+        const widthScale = barWidth / prevBarWidth;
+
+        for (const circle of circleData) {
+            if (circle.isOnBar) {
+                const circleCenterX = circle.x + circle.radius;
+                const distFromOldCenter = circleCenterX - prevSeesawCenterX;
+
+                const scaledDist = distFromOldCenter * widthScale;
+
+                const newCenterX = seesawCenterX + scaledDist;
+                circle.x = newCenterX - circle.radius;
+                circle.element.style.left = `${circle.x}px`;
+
+                groundHeight = ground ? ground.offsetHeight : 0;
+                supportHeight = support ? support.offsetHeight : 0;
+                baseHeight = groundHeight + supportHeight + barHeight;
+
+                const horizontalDistFromPivot = scaledDist;
+                const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromPivot, barHeight);
+                const targetY = container.clientHeight - baseHeight - barSurfaceY - circle.radius;
+
+                circle.y = targetY;
+                circle.element.style.top = `${circle.y}px`;
+            }
+        }
+
+        updatePreviewLine();
+        updateInformationBoxes();
     }
 
     function nextCircle() {

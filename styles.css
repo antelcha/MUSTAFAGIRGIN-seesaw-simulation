@@ -259,6 +259,7 @@ min-height: 100vh;
     }
     
     .seesaw-container .bar {
+        width: 340px;
         bottom: 85px;
     }
     
