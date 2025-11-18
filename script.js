@@ -79,6 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.querySelector('#reset-button');
     resetButton.addEventListener('click', reset);
 
+    let isPaused = false;
+    const pauseButton = document.querySelector('#pause-button');
+    pauseButton.addEventListener('click', togglePause);
+
     const shooshSound = document.getElementById('shoosh-sound');
     shooshSound.volume = 0.6    ;
 
@@ -146,6 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
     container.addEventListener('click', (event) => {
         if (previewCircle.element.style.display === 'none') {
             return
+        }
+        if (isPaused) {
+            return;
         }
         
         const rect = container.getBoundingClientRect();
@@ -292,6 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function fall() {
+
+        if (isPaused) {
+            animationRunning = false;
+            return;
+        }
         
         let falling = false;
         if (circleData.length > 0) {
@@ -448,6 +460,8 @@ document.addEventListener('DOMContentLoaded', () => {
         logContainer.innerHTML = '';
         leftWeight = 0
         rightWeight = 0
+        pauseButton.textContent = 'Pause';
+        pauseButton.style.backgroundColor = '#ab41e0';
         updateInformationBoxes();
         console.log('reset');
         for (const circle of circleData) {
@@ -458,6 +472,24 @@ document.addEventListener('DOMContentLoaded', () => {
         console.clear();
 
     }
+
+    function togglePause() {
+        isPaused = !isPaused;
+            
+        if (isPaused) {
+            pauseButton.textContent = 'Resume';
+            pauseButton.style.backgroundColor = '#f59e0b';
+        } else {
+            pauseButton.textContent = 'Pause';
+            pauseButton.style.backgroundColor = '#ab41e0';
+            
+            if (!animationRunning && circleData.length > 0) {
+                animationRunning = true;
+                fall();
+            }
+        }
+    }
+    
 
     updateInformationBoxes();
 
