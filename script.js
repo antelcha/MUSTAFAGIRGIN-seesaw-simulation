@@ -194,9 +194,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 animationRunning = false;
             } 
         }
-
+        
+        updateBoxes();
     }
 
+    function updateBoxes() {
+    const tiltBox = document.querySelector('#tilt-angle');
+        if (tiltBox) {
+            tiltBox.textContent = barAngle.toFixed(1) + ' degree';
+        }
+    }
 
 
     function updateCirclesIfNeeded(newAngle) {
