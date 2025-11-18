@@ -181,6 +181,22 @@ min-height: 100vh;
         background-color: #6a258e;
     }
 }
+
+#pause-button.paused {
+    background-color: #e08341;
+    &:hover {
+        background-color: #e0a841;
+    }
+
+    &:active {
+        background-color: #e08341;
+    }
+}
+
+
+
+
+
 @media (max-width: 500px) {
     body {
         padding: 10px;

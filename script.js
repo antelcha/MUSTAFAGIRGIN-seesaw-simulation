@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leftWeight = 0
         rightWeight = 0
         pauseButton.textContent = 'Pause';
-        pauseButton.style.backgroundColor = '#ab41e0';
+        pauseButton.classList.remove('paused');
         updateInformationBoxes();
         console.log('reset');
         for (const circle of circleData) {
@@ -478,10 +478,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
         if (isPaused) {
             pauseButton.textContent = 'Resume';
-            pauseButton.style.backgroundColor = '#f59e0b';
+            pauseButton.classList.add('paused');
+
         } else {
             pauseButton.textContent = 'Pause';
-            pauseButton.style.backgroundColor = '#ab41e0';
+            pauseButton.classList.remove('paused');
             
             if (!animationRunning && circleData.length > 0) {
                 animationRunning = true;
