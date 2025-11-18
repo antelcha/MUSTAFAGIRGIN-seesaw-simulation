@@ -169,6 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+    window.addEventListener('resize', () => {
+        console.log('resize');
+        recalculateDimensions();
+    });
+
+    function recalculateDimensions() {
+        
+    }
+
     function nextCircle() {
         const randomCircle = possibleCircles[Math.floor(Math.random() * possibleCircles.length)];
         nextWeight = randomCircle.mass;
