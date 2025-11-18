@@ -75,6 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.querySelector('#reset-button');
     resetButton.addEventListener('click', reset);
 
+    const shooshSound = document.getElementById('shoosh-sound');
+    shooshSound.volume = 0.6    ;
+
+
      
 
     function createCircle(x, y, mass, radius, color) {
@@ -150,10 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
         circleData.push(newCircle);
         container.appendChild(newCircle.element);
 
+        shooshSound.currentTime = 0;
+        shooshSound.play();
 
         if (!animationRunning) {
             animationRunning = true;
+            
             fall();
+
         }
 
         console.log(previewCircle);
