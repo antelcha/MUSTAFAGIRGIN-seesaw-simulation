@@ -462,6 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rightWeight = 0
         pauseButton.textContent = 'Pause';
         pauseButton.classList.remove('paused');
+        isPaused = false;
         updateInformationBoxes();
         console.log('reset');
         for (const circle of circleData) {
