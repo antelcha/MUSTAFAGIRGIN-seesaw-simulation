@@ -127,6 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     container.addEventListener('click', (event) => {
+        if (previewCircle.element.style.display === 'none') {
+            return
+        }
+        
         const rect = container.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
@@ -205,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function fall() {
+        
         let falling = false;
         if (circleData.length > 0) {
             for (const circle of circleData) {
