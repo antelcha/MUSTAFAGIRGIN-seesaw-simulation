@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.simulation-container');
     const bar = document.querySelector('.bar');
 
-    const circleData = [];
+    let circleData = [];
     let barAngle = 0;
     let animationRunning = false;
 
@@ -70,6 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const logContainer = document.querySelector('.log-container');
     let dropCount = 0;
+
+
+    const resetButton = document.querySelector('#reset-button');
+    resetButton.addEventListener('click', reset);
+
      
 
     function createCircle(x, y, mass, radius, color) {
@@ -286,7 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const side = position < 0 ? 'LEFT' : 'RIGHT';
         
         logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position)}px ${side}`;
-            
         logContainer.insertBefore(logEntry, logContainer.firstChild);
     }
 
@@ -361,6 +365,26 @@ document.addEventListener('DOMContentLoaded', () => {
             y: newY + cy
         };
     }
+
+
+    function reset() {
+        setAngle(0);
+        animationRunning = false;
+        dropCount = 0;
+        logContainer.innerHTML = '';
+        leftWeight = 0
+        rightWeight = 0
+        updateInformationBoxes();
+        console.log('reset');
+        for (const circle of circleData) {
+            circle.element.remove();
+        }
+        circleData = [];
+        updatePreviewLine();
+        console.clear();
+
+    }
+
     updateInformationBoxes();
 
 });

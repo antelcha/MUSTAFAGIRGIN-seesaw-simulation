@@ -140,3 +140,15 @@ min-height: 100vh;
     border: 1px solid #000;
     overflow-y: auto;
 }
+
+#reset-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 30%;
+    
+}
