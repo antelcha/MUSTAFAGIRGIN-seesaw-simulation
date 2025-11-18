@@ -162,3 +162,66 @@ min-height: 100vh;
     
 
 }
+
+
+@media (max-width: 500px) {
+    body {
+        padding: 10px;
+    }
+    
+    .game-container {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    
+    .simulation-container {
+        width: 100%;
+        height: 400px;
+    }
+    
+    .seesaw-container .bar {
+        width: 70%;
+    }
+    
+    .seesaw-container .support {
+        border-left: 35px solid transparent;
+        border-right: 35px solid transparent;
+        border-bottom: 70px solid #10b981;
+    }
+    
+    .simulation-container .seesaw-container {
+        height: 70px;
+    }
+    
+    .seesaw-container .bar {
+        bottom: 70px;
+    }
+    
+    .game-container .row {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        height: auto;
+        gap: 10px;
+    }
+    
+    .row .box {
+        width: 100%;
+        height: auto;
+        min-height: 50px;
+    }
+    
+    .log-container {
+        margin-top: 20px;
+        height: 150px;
+    }
+    
+    #reset-button {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+}

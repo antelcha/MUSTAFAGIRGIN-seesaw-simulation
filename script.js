@@ -10,22 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const ground = document.querySelector('.ground');
     const support = document.querySelector('.support');
 
-    const groundHeight = ground ? ground.offsetHeight : 0;
-    const supportHeight = support ? support.offsetHeight : 0;
-    const barHeight = bar ? bar.offsetHeight : 0;
-    const barWidth = bar ? bar.offsetWidth : 0;
-    const baseHeight = groundHeight + supportHeight + barHeight;
+    let groundHeight = ground ? ground.offsetHeight : 0;
+    let supportHeight = support ? support.offsetHeight : 0;
+    let barHeight = bar ? bar.offsetHeight : 0;
+    let barWidth = bar ? bar.offsetWidth : 0;
+    let baseHeight = groundHeight + supportHeight + barHeight;
 
-    const circleRadius = 50;
 
-    const barRect = bar.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
 
-    const seesawCenterX = (barRect.left + barRect.right) / 2 - containerRect.left;
-    const seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
+    let barRect = bar.getBoundingClientRect();
+    let containerRect = container.getBoundingClientRect();
 
-    const barLeft = barRect.left - containerRect.left;
-    const barRight = barRect.right - containerRect.left;
+    let seesawCenterX = (barRect.left + barRect.right) / 2 - containerRect.left;
+    let seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
+
+    let barLeft = barRect.left - containerRect.left;
+    let barRight = barRect.right - containerRect.left;
 
     let totalTorque = 0;
     let leftWeight = 0;
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
 
-    let previewCircle = createCircle(0, 30, 2, circleRadius, 'red');
+    let previewCircle = createCircle(0, 30, 2, 50, 'red');
     container.appendChild(previewCircle.element);
     previewCircle.element.style.display = 'none';
     nextCircle();
@@ -174,8 +174,17 @@ document.addEventListener('DOMContentLoaded', () => {
         recalculateDimensions();
     });
 
+
     function recalculateDimensions() {
+        const containerRect = container.getBoundingClientRect();
+        const barRect = bar.getBoundingClientRect();
+        seesawCenterX = (barRect.left + barRect.right) / 2 - containerRect.left;
+        seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
+        barWidth = bar.offsetWidth;
+        barHeight = bar.offsetHeight;
         
+        console.log('Dimensions recalculated');
+
     }
 
     function nextCircle() {
