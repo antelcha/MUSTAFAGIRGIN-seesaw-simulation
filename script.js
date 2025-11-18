@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const barRight = barRect.right - containerRect.left;
 
     let totalTorque = 0;
-
+    let leftWeight = 0;
+    let rightWeight = 0;
+    let nextWeight = 0;
     console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
 
     bar.style.transform = `rotate(${barAngle}deg)`;
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function nextCircle() {
         const randomCircle = possibleCircles[Math.floor(Math.random() * possibleCircles.length)];
-        
+        nextWeight = randomCircle.mass;
         const oldCenterX = previewCircle.x + previewCircle.radius;
         const oldCenterY = previewCircle.y + previewCircle.radius;
         
@@ -185,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            const newAngle = Math.max(-30, Math.min(30, (calculateTorque() / 10)));
+            const newAngle = Math.max(-30, Math.min(30, (calculateTorqueAndWeights() / 10)));
             updateCirclesIfNeeded(newAngle);
 
             if (falling) {
@@ -195,13 +197,25 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
         }
         
-        updateBoxes();
+        updateInformationBoxes();
     }
 
-    function updateBoxes() {
-    const tiltBox = document.querySelector('#tilt-angle');
+    function updateInformationBoxes() {
+        const tiltBox = document.querySelector('#tilt-angle');
+        const leftWeightBox = document.querySelector('#left-weight');
+        const rightWeightBox = document.querySelector('#right-weight');
+        const nextWeightBox = document.querySelector('#next-weight');
         if (tiltBox) {
-            tiltBox.textContent = barAngle.toFixed(1) + ' degree';
+            tiltBox.querySelector('.value').textContent = barAngle.toFixed(1) + ' degree';
+        }
+        if (leftWeightBox) {
+            leftWeightBox.querySelector('.value').textContent = leftWeight + ' kg';
+        }
+        if (rightWeightBox) {
+            rightWeightBox.querySelector('.value').textContent = rightWeight + ' kg';
+        }
+        if (nextWeightBox) {
+            nextWeightBox.querySelector('.value').textContent = nextWeight + ' kg';
         }
     }
 
@@ -232,13 +246,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setAngle(newAngle);
     }
 
-    function calculateTorque() {
+    function calculateTorqueAndWeights() {
         totalTorque = 0;
+        leftWeight = 0;
+        rightWeight = 0;
         for (const circle of circleData) {
             if (circle.isOnBar) {
                 const distance = circle.x + circle.radius - seesawCenterX;
                 const force = circle.mass;
                 totalTorque += distance * force;
+                if (distance < 0) {
+                    leftWeight += force;
+                } else {
+                    rightWeight += force;
+                }
             }
         }
         return totalTorque;
@@ -263,6 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
             y: newY + cy
         };
     }
-    
+    updateInformationBoxes();
 
 });
