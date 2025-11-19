@@ -430,9 +430,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalTorque += distance * force;
                 if (distance < 0) 
                     leftWeight += force;
-                } else {
+                else 
                     rightWeight += force;
-                }
             }
         }
         return totalTorque;
