@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newAngle = Math.max(-30, Math.min(30, (calculateTorqueAndWeights() / 10)));
             updateCirclesIfNeeded(newAngle);
 
-            const angleNeedsUpdate = Math.abs(newAngle - barAngle) > 0.01;
+            const angleNeedsUpdate = Math.abs(newAngle - barAngle) > 0.001;
 
             if (falling || angleNeedsUpdate) {
                 requestAnimationFrame(fall);
@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rightWeightBox = document.querySelector('#right-weight');
         const nextWeightBox = document.querySelector('#next-weight');
         if (tiltBox) {
-            tiltBox.querySelector('.value').textContent = barAngle.toFixed(1) + ' degree';
+            tiltBox.querySelector('.value').textContent = barAngle.toFixed(2) + ' degree';
         }
         if (leftWeightBox) {
             leftWeightBox.querySelector('.value').textContent = leftWeight + ' kg';
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCirclesIfNeeded(newAngle) {
         const angleDifference = newAngle - barAngle;
         
-        if (Math.abs(angleDifference) < 0.01) {
+        if (Math.abs(angleDifference) < 0.001) {
             return;
         }
         
