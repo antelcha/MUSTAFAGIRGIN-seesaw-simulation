@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logEntry.style.backgroundColor = circle.color;
 
         
-        const position = Math.round(circle.x + circle.radius - seesawCenterX);
+        const position = circle.distanceFromPivot;
         const side = position < 0 ? 'LEFT' : 'RIGHT';
         
         logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position)}px ${side}`;
