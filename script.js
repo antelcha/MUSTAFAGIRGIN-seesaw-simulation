@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    const MAX_TILT_ANGLE = 30;
+    const FALL_SPEED = 10;
+    const TORQUE_MULTIPLIER = 10;
+    const ANGLE_SMOOTH_FACTOR = 0.2;
+    const ANGLE_THRESHOLD = 0.001;
+
     const container = document.querySelector('.simulation-container');
     const bar = document.querySelector('.bar');
 
@@ -54,9 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         oldSeesawCenterX = seesawCenterX;
         oldSeesawCenterY = seesawCenterY;
         oldBarWidth = barWidth;
-
-        console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
-        console.log(`Bar width: ${barWidth}`);
     }
 
     setTimeout(initializeDimensions, 0);
@@ -168,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         previewCircle.element.style.left = `${previewCircle.x}px`;
 
         updatePreviewLine();
-        console.log(mouseX, mouseY);
     });
 
     container.addEventListener('click', (event) => {
@@ -201,14 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
 
-        console.log(previewCircle);
         nextCircle()
 
     });
 
 
     window.addEventListener('resize', () => {
-        console.log('resize');
         const prevSeesawCenterX = oldSeesawCenterX;
         const prevSeesawCenterY = oldSeesawCenterY;
         const prevBarWidth = oldBarWidth;
@@ -234,9 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
         barWidth = bar.offsetWidth;
         barHeight = bar.offsetHeight;
-        
-        console.log('Dimensions recalculated');
-
     }
 
     function moveCirclesToNewPosition(prevSeesawCenterX, prevSeesawCenterY, prevBarWidth) {
@@ -330,46 +328,53 @@ document.addEventListener('DOMContentLoaded', () => {
         return centerY - (barHeight / 2) * Math.cos(rad);
     }
 
-    function fall() {
+    function updateCirclePositions() {
+        let falling = false;
+        for (const circle of circleData) {
+            const horizontalDistFromPivot = (circle.x + circle.radius) - seesawCenterX;
+            const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromPivot, barHeight);
+            const targetY = container.clientHeight - baseHeight - barSurfaceY - circle.radius;
 
+            if (circle.y < targetY) {
+                falling = true;
+                circle.y = Math.min(circle.y + FALL_SPEED, targetY);
+                circle.element.style.top = `${circle.y}px`;
+
+                if (circle.y >= targetY && !circle.isOnBar) {
+                    circle.isOnBar = true;
+                    circle.distanceFromPivot = (circle.x + circle.radius) - seesawCenterX;
+                    logDrop(circle);
+                }
+            }
+        }
+        return falling;
+    }
+
+    function calculateNewAngle() {
+        return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, 
+            calculateTorqueAndWeights() / TORQUE_MULTIPLIER));
+    }
+
+    function shouldContinueAnimation(newAngle) {
+        return Math.abs(newAngle - barAngle) > ANGLE_THRESHOLD;
+    }
+
+    function fall() {
         if (isPaused) {
             animationRunning = false;
             return;
         }
         
-        let falling = false;
         if (circleData.length > 0) {
-            for (const circle of circleData) {
-
-                const horizontalDistFromPivot = (circle.x + circle.radius) - seesawCenterX;
-
-                const barSurfaceY = getBarSurfaceY(barAngle, horizontalDistFromPivot, barHeight);
-
-                const targetY = container.clientHeight - baseHeight - barSurfaceY - circle.radius;
-
-                if (circle.y < targetY) {
-                    falling = true;
-                    circle.y = Math.min(circle.y + 10, targetY);
-                    circle.element.style.top = `${circle.y}px`;
-
-                    if (circle.y >= targetY && !circle.isOnBar) {
-                        circle.isOnBar = true;
-                        circle.distanceFromPivot = (circle.x + circle.radius) - seesawCenterX;
-                        console.log(`Drop - distFromPivot: ${circle.distanceFromPivot.toFixed(2)}, seesawCenterX: ${seesawCenterX.toFixed(2)}, barWidth: ${barWidth}`);
-                        logDrop(circle)
-                    }
-                }
-            }
-            const newAngle = Math.max(-30, Math.min(30, (calculateTorqueAndWeights() / 10)));
+            const falling = updateCirclePositions();
+            const newAngle = calculateNewAngle();
             updateCirclesIfNeeded(newAngle);
 
-            const angleNeedsUpdate = Math.abs(newAngle - barAngle) > 0.001;
-
-            if (falling || angleNeedsUpdate) {
+            if (falling || shouldContinueAnimation(newAngle)) {
                 requestAnimationFrame(fall);
             } else {
                 animationRunning = false;
-            } 
+            }
         }
         
         updateInformationBoxes();
@@ -410,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const position = circle.distanceFromPivot;
         const side = position < 0 ? 'LEFT' : 'RIGHT';
         
-        logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position)}px ${side}`;
+        logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position).toFixed(2)}px ${side}`;
         logContainer.insertBefore(logEntry, logContainer.firstChild);
     }
 
@@ -418,11 +423,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCirclesIfNeeded(newAngle) {
         const angleDifference = newAngle - barAngle;
         
-        if (Math.abs(angleDifference) < 0.001) {
+        if (Math.abs(angleDifference) < ANGLE_THRESHOLD) {
             return;
         }
         
-        const step = angleDifference * 0.2; 
+        const step = angleDifference * ANGLE_SMOOTH_FACTOR; 
         
         for (const circle of circleData) {
             if (circle.isOnBar) {
@@ -497,14 +502,11 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseButton.classList.remove('paused');
         isPaused = false;
         updateInformationBoxes();
-        console.log('reset');
         for (const circle of circleData) {
             circle.element.remove();
         }
         circleData = [];
         updatePreviewLine();
-        console.clear();
-
     }
 
     function togglePause() {
