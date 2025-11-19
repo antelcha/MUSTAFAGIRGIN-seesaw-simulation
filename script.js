@@ -65,7 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(initializeDimensions, 0);
 
+    setTimeout(() => {
+        loadState();
 
+    }, 100);
 
 
     bar.style.transform = `rotate(${barAngle}deg)`;
@@ -417,6 +420,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         logEntry.textContent = `Drop #${dropCount}: Mass ${circle.mass}kg, Position ${Math.abs(position).toFixed(2)}px ${side}`;
         logContainer.insertBefore(logEntry, logContainer.firstChild);
+        
+        saveState();
     }
 
 
@@ -507,6 +512,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         circleData = [];
         updatePreviewLine();
+        
+        localStorage.removeItem('seesawState');
     }
 
     function togglePause() {
@@ -527,6 +534,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+
+    updateInformationBoxes();
+
+    function saveState() {
+        const state = {
+            dropCount,
+            barAngle,
+            leftWeight,
+            rightWeight,
+            nextWeight,
+            seesawCenterX,
+            seesawCenterY,
+            barWidth,
+            circles: circleData.map(c => ({
+                x: c.x,
+                y: c.y,
+                mass: c.mass,
+                radius: c.radius,
+                color: c.color,
+                isOnBar: c.isOnBar,
+                distanceFromPivot: c.distanceFromPivot
+            })),
+            logs: logContainer.innerHTML
+        };
+        localStorage.setItem('seesawState', JSON.stringify(state));
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem('seesawState');
+        if (!saved) return;
+        
+        try {
+            const state = JSON.parse(saved);
+            
+            dropCount = state.dropCount;
+            barAngle = state.barAngle;
+            leftWeight = state.leftWeight;
+            rightWeight = state.rightWeight;
+            nextWeight = state.nextWeight;
+            
+            const savedSeesawCenterX = state.seesawCenterX;
+            const savedSeesawCenterY = state.seesawCenterY;
+            const savedBarWidth = state.barWidth;
+            
+            state.circles.forEach(c => {
+                const circle = createCircle(
+                    c.x + c.radius,
+                    c.y + c.radius,
+                    c.mass,
+                    c.radius,
+                    c.color
+                );
+                circle.isOnBar = c.isOnBar;
+                circle.distanceFromPivot = c.distanceFromPivot;
+                circleData.push(circle);
+                container.appendChild(circle.element);
+            });
+            
+            logContainer.innerHTML = state.logs;
+            setAngle(barAngle);
+            
+            recalculateDimensions();
+            if (circleData.length > 0) {
+                moveCirclesToNewPosition(savedSeesawCenterX, savedSeesawCenterY, savedBarWidth);
+            }
+            
+            updateInformationBoxes();
+        } catch (e) {
+            console.error('Error loading state:', e);
+        }
+    }
+
+
 
     updateInformationBoxes();
 
