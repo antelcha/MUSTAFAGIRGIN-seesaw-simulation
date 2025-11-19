@@ -189,11 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         recalculateDimensions();
         moveCirclesToNewPosition(prevSeesawCenterX, prevSeesawCenterY, prevBarWidth);
-
+        centerThePreviewCircle();
         oldSeesawCenterX = seesawCenterX;
         oldSeesawCenterY = seesawCenterY;
         oldBarWidth = barWidth;
     });
+
+    function centerThePreviewCircle() {
+        previewCircle.x = seesawCenterX - previewCircle.radius;
+        previewCircle.element.style.left = `${previewCircle.x}px`;
+    }
 
 
     function recalculateDimensions() {
