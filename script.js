@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         massText.style.pointerEvents = 'none';
         circle.appendChild(massText);
         
-        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius, color: color };
+        return { element: circle, x: x - radius, y: y - radius, mass: mass, isOnBar: false, radius: radius, color: color, distanceFromPivot: 0 };
     }
 
     function isPointOnBar(x, y) {
@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (circle.y >= targetY && !circle.isOnBar) {
                         circle.isOnBar = true;
+                        circle.distanceFromPivot = (circle.x + circle.radius) - seesawCenterX;
                         logDrop(circle)
                     }
                 }
@@ -424,10 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
         rightWeight = 0;
         for (const circle of circleData) {
             if (circle.isOnBar) {
-                const distance = circle.x + circle.radius - seesawCenterX;
+                const distance = circle.distanceFromPivot;
                 const force = circle.mass;
                 totalTorque += distance * force;
-                if (distance < 0) {
+                if (distance < 0) 
                     leftWeight += force;
                 } else {
                     rightWeight += force;
