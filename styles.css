@@ -283,10 +283,6 @@ min-height: 100vh;
         height: 500px;
     }
     
-    .seesaw-container .bar {
-        width: 60%;
-    }
-    
     .seesaw-container .support {
         border-left: 40px solid transparent;
         border-right: 40px solid transparent;
@@ -313,7 +309,6 @@ min-height: 100vh;
     }
     
     .row .box {
-
         min-height: 55px;
         padding: 10px;
     }

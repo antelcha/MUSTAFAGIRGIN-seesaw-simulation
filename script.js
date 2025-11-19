@@ -10,38 +10,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const ground = document.querySelector('.ground');
     const support = document.querySelector('.support');
 
-    let groundHeight = ground ? ground.offsetHeight : 0;
-    let supportHeight = support ? support.offsetHeight : 0;
-    let barHeight = bar ? bar.offsetHeight : 0;
-    let barWidth = bar ? bar.offsetWidth : 0;
-    let baseHeight = groundHeight + supportHeight + barHeight;
+    let groundHeight = 0;
+    let supportHeight = 0;
+    let barHeight = 0;
+    let barWidth = 0;
+    let baseHeight = 0;
 
+    let barRect;
+    let containerRect;
 
+    let seesawCenterX = 0;
+    let seesawCenterY = 0;
 
-    let barRect = bar.getBoundingClientRect();
-    let containerRect = container.getBoundingClientRect();
+    let barLeft = 0;
+    let barRight = 0;
 
-    let seesawCenterX = (barRect.left + barRect.right) / 2 - containerRect.left;
-    let seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
-
-    let barLeft = barRect.left - containerRect.left;
-    let barRight = barRect.right - containerRect.left;
-
-    let oldSeesawCenterX = seesawCenterX;
-    let oldSeesawCenterY = seesawCenterY;
-    let oldBarWidth = barWidth;
+    let oldSeesawCenterX = 0;
+    let oldSeesawCenterY = 0;
+    let oldBarWidth = 0;
 
     let totalTorque = 0;
     let leftWeight = 0;
     let rightWeight = 0;
     let nextWeight = 0;
-    console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
 
-    
 
-    
+    function initializeDimensions() {
+        groundHeight = ground ? ground.offsetHeight : 0;
+        supportHeight = support ? support.offsetHeight : 0;
+        barHeight = bar ? bar.offsetHeight : 0;
+        barWidth = bar ? bar.offsetWidth : 0;
+        baseHeight = groundHeight + supportHeight + barHeight;
+
+        barRect = bar.getBoundingClientRect();
+        containerRect = container.getBoundingClientRect();
+
+        seesawCenterX = (barRect.left + barRect.right) / 2 - containerRect.left;
+        seesawCenterY = (barRect.top + barRect.bottom) / 2 - containerRect.top;
+
+        barLeft = barRect.left - containerRect.left;
+        barRight = barRect.right - containerRect.left;
+
+        oldSeesawCenterX = seesawCenterX;
+        oldSeesawCenterY = seesawCenterY;
+        oldBarWidth = barWidth;
+
+        console.log(`Seesaw pivot: (${seesawCenterX}, ${seesawCenterY})`);
+        console.log(`Bar width: ${barWidth}`);
+    }
+
+    setTimeout(initializeDimensions, 0);
+
+
+
+
     bar.style.transform = `rotate(${barAngle}deg)`;
-        
+
     const possibleCircles = [
         { color: '#FF0000', mass: 1, radius: 8 },    // parlak kırmızı
         { color: '#00FFD0', mass: 2, radius: 10 },   // canlı turkuaz
@@ -161,7 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isPointOnBar(mouseX, mouseY)) return;
 
-        const newCircle = createCircle(previewCircle.x + previewCircle.radius, previewCircle.y + previewCircle.radius, previewCircle.mass, previewCircle.radius, previewCircle.color);
+        const circleCenterX = Math.round(previewCircle.x + previewCircle.radius);
+        const circleCenterY = Math.round(previewCircle.y + previewCircle.radius);
+        const newCircle = createCircle(circleCenterX, circleCenterY, previewCircle.mass, previewCircle.radius, previewCircle.color);
         circleData.push(newCircle);
         container.appendChild(newCircle.element);
 
@@ -240,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 circle.y = targetY;
                 circle.element.style.top = `${circle.y}px`;
+                circle.distanceFromPivot = scaledDist;
             }
         }
 
@@ -328,6 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (circle.y >= targetY && !circle.isOnBar) {
                         circle.isOnBar = true;
                         circle.distanceFromPivot = (circle.x + circle.radius) - seesawCenterX;
+                        console.log(`Drop - distFromPivot: ${circle.distanceFromPivot.toFixed(2)}, seesawCenterX: ${seesawCenterX.toFixed(2)}, barWidth: ${barWidth}`);
                         logDrop(circle)
                     }
                 }
